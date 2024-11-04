@@ -1,0 +1,198 @@
+name: workshop-management-system
+version: 1.0.0
+
+# Environment Configuration
+environment:
+  # Core Settings
+  NODE_ENV: production
+  PORT: 3000
+  HOST: 0.0.0.0
+
+  # Database Configuration
+  database:
+    type: postgresql
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    name: ${DB_NAME}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    ssl: true
+    max_connections: 20
+    idle_timeout: 30000
+
+  # Email Configuration
+  email:
+    provider: ${EMAIL_PROVIDER} # smtp, sendgrid, mailgun
+    host: ${SMTP_HOST}
+    port: ${SMTP_PORT}
+    username: ${SMTP_USER}
+    password: ${SMTP_PASS}
+    from_address: ${SMTP_FROM}
+
+  # Storage Configuration
+  storage:
+    provider: ${STORAGE_PROVIDER} # aws, gcp, azure, local
+    bucket: ${STORAGE_BUCKET}
+    access_key: ${STORAGE_ACCESS_KEY}
+    secret_key: ${STORAGE_SECRET_KEY}
+    region: ${STORAGE_REGION}
+
+  # Security Configuration
+  security:
+    jwt_secret: ${JWT_SECRET}
+    jwt_expires_in: 1d
+    refresh_token_expires_in: 7d
+    session_timeout: 30
+    allowed_origins: ${CORS_ORIGINS}
+
+  # Integration Configuration
+  integrations:
+    stripe:
+      public_key: ${STRIPE_PUBLIC_KEY}
+      secret_key: ${STRIPE_SECRET_KEY}
+      webhook_secret: ${STRIPE_WEBHOOK_SECRET}
+    
+    google:
+      client_id: ${GOOGLE_CLIENT_ID}
+      client_secret: ${GOOGLE_CLIENT_SECRET}
+
+# Deployment Configuration
+deployment:
+  # AWS Configuration
+  aws:
+    region: ${AWS_REGION}
+    s3_bucket: ${AWS_S3_BUCKET}
+    cloudfront_id: ${AWS_CLOUDFRONT_ID}
+    certificate_arn: ${AWS_CERTIFICATE_ARN}
+    route53_zone_id: ${AWS_ROUTE53_ZONE_ID}
+
+  # DigitalOcean Configuration
+  digitalocean:
+    app_name: workshop-management
+    region: ${DO_REGION}
+    size: basic-xxl
+    database:
+      cluster_name: ${DO_DB_CLUSTER}
+      engine: pg
+      version: "14"
+      size: db-s-2vcpu-4gb
+
+  # Netlify Configuration
+  netlify:
+    site_name: workshop-management
+    team: ${NETLIFY_TEAM}
+    branch: main
+
+# Build Configuration
+build:
+  command: npm run build
+  output: dist
+  environment:
+    node_version: 18
+    npm_version: 9
+
+# Service Dependencies
+services:
+  - name: database
+    type: postgresql
+    version: "14"
+    required: true
+
+  - name: redis
+    type: redis
+    version: "7"
+    required: false
+
+  - name: elasticsearch
+    type: elasticsearch
+    version: "8"
+    required: false
+
+# Backup Configuration
+backup:
+  enabled: true
+  schedule: "0 0 * * *" # Daily at midnight
+  retention_days: 30
+  storage:
+    provider: ${BACKUP_STORAGE_PROVIDER}
+    bucket: ${BACKUP_BUCKET}
+
+# Monitoring Configuration
+monitoring:
+  enabled: true
+  metrics:
+    - cpu_usage
+    - memory_usage
+    - disk_usage
+    - response_time
+    - error_rate
+  alerts:
+    - type: cpu
+      threshold: 80
+    - type: memory
+      threshold: 85
+    - type: disk
+      threshold: 90
+    - type: error_rate
+      threshold: 5
+
+# Scaling Configuration
+scaling:
+  auto_scaling: true
+  min_instances: 1
+  max_instances: 5
+  target_cpu_utilization: 70
+
+# SSL Configuration
+ssl:
+  enabled: true
+  provider: ${SSL_PROVIDER} # letsencrypt, acm
+  domains:
+    - ${DOMAIN}
+    - "*.${DOMAIN}"
+
+# Feature Flags
+features:
+  ai_insights: ${ENABLE_AI_INSIGHTS}
+  multi_language: ${ENABLE_MULTI_LANGUAGE}
+  offline_mode: ${ENABLE_OFFLINE_MODE}
+  custom_branding: ${ENABLE_CUSTOM_BRANDING}
+
+# Documentation
+documentation:
+  api: https://api.workshop-manager.com/docs
+  user_guide: https://docs.workshop-manager.com/guide
+  admin_guide: https://docs.workshop-manager.com/admin
+
+# Support
+support:
+  email: support@workshop-manager.com
+  docs: https://docs.workshop-manager.com
+  community: https://community.workshop-manager.com
+
+# Deployment Instructions
+instructions:
+  local:
+    - "Copy .env.example to .env"
+    - "Update environment variables"
+    - "Run: npm install"
+    - "Run: npm run build"
+    - "Run: npm start"
+
+  aws:
+    - "Configure AWS CLI"
+    - "Update AWS environment variables"
+    - "Run: aws configure"
+    - "Run: npm run deploy:aws"
+
+  digitalocean:
+    - "Install doctl"
+    - "Run: doctl auth init"
+    - "Update DigitalOcean environment variables"
+    - "Run: npm run deploy:do"
+
+  netlify:
+    - "Install Netlify CLI"
+    - "Run: netlify login"
+    - "Update Netlify environment variables"
+    - "Run: npm run deploy:netlify"
